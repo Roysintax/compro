@@ -1,6 +1,9 @@
 <?php
 //jikan data setting sudah ada maka update data tersebut
 //Selain itu kalau belum ada maka insert data 
+$querySettings = mysqli_query($koneksi, "SELECT * FROM settings LIMIT 1");
+$row = mysqli_fetch_assoc($querySettings);
+
 if (isset($_POST['simpan'])) {
     $email = $_POST['email'];
     $phone = $_POST['phone'];
@@ -9,14 +12,35 @@ if (isset($_POST['simpan'])) {
     $ig = $_POST['ig'];
     $twitter = $_POST['twitter'];
     $linkedin = $_POST['linkedin'];
-    $querySettings = mysqli_query($koneksi, "SELECT * FROM settings LIMIT 1");
-    if (mysqli_num_rows($querySettings) > 0) {
-        $row = mysqli_fetch_assoc($querySettings);
-        $update = mysqli_query($konek, "UPDATE setting SET 
-        email = '$email' phone='$phone', address = '$address', ig='$ig', fb='$fb', twitter='$twitter', 
+
+    if (!empty($_FILES['logo']['name'])) {
+        $logo = $_FILES['logo']['name'];
+        $path = "upload/";
+        if (!is_dir($path)) mkdir($path);
+
+        $logo_name = time() . "-" . basename($logo);
+        $target_files = $path . $logo_name;
+        if (move_uploaded_file($_FILES['logo']['tmp_name'], $target_files)) {
+            //jika gambar ada maka gambar sebelumnya akan diganti dengan gambar baru
+            if (!empty($row['logo'])) {
+                unlink($row['logo']);
+            }
+        }
+    }
+
+    if ($row) {
+        $id_setting = $row['id'];
+        $update = mysqli_query($koneksi, "UPDATE settings SET 
+        email = '$email', 
+        phone='$phone',
+        logo = '$logo_name',
+        address = '$address', ig='$ig', fb='$fb', twitter='$twitter', 
         linkedin = '$linkedin' WHERE id = '$id_setting'");
+        if ($update) {
+            header("location:?page=setting&ubah=berhasil");
+        }
     } else {
-        $insert = mysqli_query($koneksi, "INSERT INTO settings(email,phone,address,ig,fb,twitter,linkedin) VALUES ('$email','$phone','$address','$ig','$fb','$twitter','$linkedin')");
+        $insert = mysqli_query($koneksi, "INSERT INTO settings(email,phone,address,ig,fb,twitter,linkedin,logo) VALUES ('$email','$phone','$address','$ig','$fb','$twitter','$linkedin', '$$logo_name')");
         if ($insert) {
             header("location:?page=setting&tambah=berhasil");
         }
@@ -24,7 +48,7 @@ if (isset($_POST['simpan'])) {
 }
 ?>
 <div class="pagetitle">
-    <h1>Pengatura</h1>
+    <h1>Pengaturan</h1>
 </div><!-- End Page Title -->
 
 <section class="section">
@@ -48,7 +72,7 @@ if (isset($_POST['simpan'])) {
                                 <label for="" class="form-label fw-bold">No Telp</label>
                             </div>
                             <div class="col-sm-6">
-                                <input type="number" name="number" id="" class="form-control" value="<?php echo isset($row['number']) ? $row['number'] : '' ?>">
+                                <input type="phone" name="phone" id="" class="form-control" value="<?php echo isset($row['phone']) ? $row['phone'] : '' ?>">
                             </div>
                         </div>
 
@@ -57,7 +81,7 @@ if (isset($_POST['simpan'])) {
                                 <label for="" class="form-label fw-bold">Alamat</label>
                             </div>
                             <div class="col-sm-6">
-                                <textarea type="address" name="address" id="" class="form-control" value="<?php echo isset($row['address']) ? $row['address'] : '' ?>">alamat</textarea>
+                                <textarea type="address" name="address" id="" class="form-control"><?php echo isset($row['address']) ? $row['address'] : '' ?></textarea>
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -65,7 +89,7 @@ if (isset($_POST['simpan'])) {
                                 <label for="" class="form-label fw-bold">fb</label>
                             </div>
                             <div class="col-sm-6">
-                                <input type="fb" name="fb" id="" class="form-control" value="<?php echo isset($row['fb']) ? $row['fb'] : '' ?>">
+                                <input type="url" name="fb" id="" class="form-control" value="<?php echo isset($row['fb']) ? $row['fb'] : '' ?>">
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -73,7 +97,7 @@ if (isset($_POST['simpan'])) {
                                 <label for="" class="form-label fw-bold">Ig</label>
                             </div>
                             <div class="col-sm-6">
-                                <input type="ig" name="ig" id="" class="form-control" value="<?php echo isset($row['ig']) ? $row['ig'] : '' ?>">
+                                <input type="url" name="ig" id="" class="form-control" value="<?php echo isset($row['ig']) ? $row['ig'] : '' ?>">
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -81,7 +105,7 @@ if (isset($_POST['simpan'])) {
                                 <label for="" class="form-label fw-bold">Linkedin</label>
                             </div>
                             <div class="col-sm-6">
-                                <input type="linkedin" name="linkedin" id="" class="form-control" value="<?php echo isset($row['linkedin']) ? $row['linkedin'] : '' ?>">
+                                <input type="url" name="linkedin" id="" class="form-control" value="<?php echo isset($row['linkedin']) ? $row['linkedin'] : '' ?>">
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -89,7 +113,7 @@ if (isset($_POST['simpan'])) {
                                 <label for="" class="form-label fw-bold">Twitter</label>
                             </div>
                             <div class="col-sm-6">
-                                <input type="twitter" name="twitter" id="" class="form-control" value="<?php echo isset($row['twitter']) ? $row['twitter'] : '' ?>">
+                                <input type="url" name="twitter" id="" class="form-control" value="<?php echo isset($row['twitter']) ? $row['twitter'] : '' ?>">
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -97,7 +121,8 @@ if (isset($_POST['simpan'])) {
                                 <label for="" class="form-label fw-bold">Logo</label>
                             </div>
                             <div class="col-sm-6">
-                                <input type="logo" name="logo">
+                                <input type="file" name="logo">
+                                <img class="mt-2" src="upload/<?php echo isset($row['logo']) ? $row['logo'] : '' ?>" width="100">
                             </div>
                         </div>
                         <div class="mb-3 row">

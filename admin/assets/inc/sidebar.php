@@ -16,8 +16,8 @@
                 </a>
                 <ul id="components-nav" class="nav-content collapse " data-bs-parent="">
                     <li>
-                        <a href="components-alerts.html">
-                            <i class="bi bi-circle"></i><span>Alerts</span>
+                        <a href="?page=sliders">
+                            <i class="bi bi-circle"></i><span>slider</span>
                         </a>
                     </li>
                     <li>
