@@ -16,23 +16,23 @@
                 </a>
                 <ul id="components-nav" class="nav-content collapse " data-bs-parent="">
                     <li>
+                        <a href="?page=about">
+                            <i class="bi bi-circle"></i><span>About</span>
+                        </a>
+                    </li>
+                    <li>
                         <a href="?page=sliders">
                             <i class="bi bi-circle"></i><span>slider</span>
                         </a>
                     </li>
                     <li>
-                        <a href="components-accordion.html">
-                            <i class="bi bi-circle"></i><span>Accordion</span>
+                        <a href="?page=clients">
+                            <i class="bi bi-circle"></i><span>Clients</span>
                         </a>
                     </li>
                     <li>
-                        <a href="components-badges.html">
-                            <i class="bi bi-circle"></i><span>Badges</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="components-breadcrumbs.html">
-                            <i class="bi bi-circle"></i><span>Breadcrumbs</span>
+                        <a href="?page=blog">
+                            <i class="bi bi-circle"></i><span>blog</span>
                         </a>
                     </li>
                     <li>
